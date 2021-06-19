@@ -89,6 +89,12 @@ impl std::str::FromStr for ChunkType {
     }
 }
 
+impl std::fmt::Display for ChunkType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.string)
+    }
+}
+
 mod tests {
     use super::*;
     use std::convert::TryFrom;
