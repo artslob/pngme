@@ -28,18 +28,23 @@ impl ChunkType {
     fn is_safe_to_copy(&self) -> bool {
         self.safe_to_copy_bit_char.is_ascii_lowercase()
     }
-}
 
-// TODO checks for valid chars
+    fn validate_char(ch: char) -> Result<char, String> {
+        match ch.is_ascii_lowercase() || ch.is_ascii_uppercase() {
+            true => Ok(ch),
+            false => Err(format!("char should be ascii letter: {}", ch)),
+        }
+    }
+}
 
 impl std::convert::TryFrom<[u8; 4]> for ChunkType {
     type Error = String;
 
     fn try_from(bytes: [u8; 4]) -> Result<Self, Self::Error> {
-        let ancillary_bit_char = char::from(bytes[0]);
-        let private_bit_char = char::from(bytes[1]);
-        let reserved_bit_char = char::from(bytes[2]);
-        let safe_to_copy_bit_char = char::from(bytes[3]);
+        let ancillary_bit_char = Self::validate_char(char::from(bytes[0]))?;
+        let private_bit_char = Self::validate_char(char::from(bytes[1]))?;
+        let reserved_bit_char = Self::validate_char(char::from(bytes[2]))?;
+        let safe_to_copy_bit_char = Self::validate_char(char::from(bytes[3]))?;
         let chars = [
             ancillary_bit_char,
             private_bit_char,
@@ -64,7 +69,12 @@ impl std::str::FromStr for ChunkType {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let chars = s.chars().collect::<Vec<char>>();
         let chars = match chars[..] {
-            [a, b, c, d] => [a, b, c, d],
+            [a, b, c, d] => [
+                Self::validate_char(a)?,
+                Self::validate_char(b)?,
+                Self::validate_char(c)?,
+                Self::validate_char(d)?,
+            ],
             _ => return Err("string should contain 4 chars".into()),
         };
         Ok(ChunkType {
@@ -175,7 +185,6 @@ mod tests {
 
     #[test]
     pub fn test_invalid_chunk_is_valid() {
-        // TODO fix test
         let chunk = ChunkType::from_str("Rust").unwrap();
         assert!(!chunk.is_valid());
 
@@ -196,4 +205,6 @@ mod tests {
         let _chunk_string = format!("{}", chunk_type_1);
         let _are_chunks_equal = chunk_type_1 == chunk_type_2;
     }
+
+    // TODO more tests
 }
