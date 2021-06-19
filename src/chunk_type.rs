@@ -1,5 +1,5 @@
 #[derive(std::fmt::Debug)]
-struct ChunkType {
+pub struct ChunkType {
     ancillary_bit_char: char,
     private_bit_char: char,
     reserved_bit_char: char,
@@ -10,22 +10,22 @@ struct ChunkType {
 }
 
 impl ChunkType {
-    fn bytes(&self) -> [u8; 4] {
+    pub fn bytes(&self) -> [u8; 4] {
         self.bytes
     }
-    fn is_valid(&self) -> bool {
+    pub fn is_valid(&self) -> bool {
         self.is_reserved_bit_valid()
     }
-    fn is_critical(&self) -> bool {
+    pub fn is_critical(&self) -> bool {
         self.ancillary_bit_char.is_ascii_uppercase()
     }
-    fn is_public(&self) -> bool {
+    pub fn is_public(&self) -> bool {
         self.private_bit_char.is_ascii_uppercase()
     }
-    fn is_reserved_bit_valid(&self) -> bool {
+    pub fn is_reserved_bit_valid(&self) -> bool {
         self.reserved_bit_char.is_ascii_uppercase()
     }
-    fn is_safe_to_copy(&self) -> bool {
+    pub fn is_safe_to_copy(&self) -> bool {
         self.safe_to_copy_bit_char.is_ascii_lowercase()
     }
 
