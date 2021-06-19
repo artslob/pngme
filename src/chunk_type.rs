@@ -17,16 +17,16 @@ impl ChunkType {
         self.is_reserved_bit_valid()
     }
     fn is_critical(&self) -> bool {
-        self.chars[0].is_ascii_uppercase()
+        self.ancillary_bit_char.is_ascii_uppercase()
     }
     fn is_public(&self) -> bool {
-        self.chars[1].is_ascii_uppercase()
+        self.private_bit_char.is_ascii_uppercase()
     }
     fn is_reserved_bit_valid(&self) -> bool {
-        self.chars[2].is_ascii_uppercase()
+        self.reserved_bit_char.is_ascii_uppercase()
     }
     fn is_safe_to_copy(&self) -> bool {
-        self.chars[3].is_ascii_lowercase()
+        self.safe_to_copy_bit_char.is_ascii_lowercase()
     }
 }
 
