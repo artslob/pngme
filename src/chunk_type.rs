@@ -33,6 +33,21 @@ impl ChunkType {
     fn bytes(&self) -> [u8; 4] {
         self.bytes
     }
+    fn is_valid(&self) -> bool {
+        self.is_reserved_bit_valid()
+    }
+    fn is_critical(&self) -> bool {
+        self.chars[0].is_ascii_uppercase()
+    }
+    fn is_public(&self) -> bool {
+        self.chars[1].is_ascii_uppercase()
+    }
+    fn is_reserved_bit_valid(&self) -> bool {
+        self.chars[2].is_ascii_uppercase()
+    }
+    fn is_safe_to_copy(&self) -> bool {
+        self.chars[3].is_ascii_lowercase()
+    }
 }
 
 // TODO checks for valid chars
@@ -103,6 +118,7 @@ impl std::cmp::PartialEq for ChunkType {
 
 impl std::cmp::Eq for ChunkType {}
 
+#[cfg(test)]
 mod tests {
     use super::*;
     use std::convert::TryFrom;
