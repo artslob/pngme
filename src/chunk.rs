@@ -16,12 +16,12 @@ impl std::convert::TryFrom<&[u8]> for Chunk {
         let chunk_type = ChunkType::try_from(type_bytes)?;
         let data = value.iter().skip(4).copied().collect::<Vec<u8>>();
         let length = data.len() as u32;
-        // TODO calc crc
+        let crc = ::crc::crc32::checksum_ieee(&data);
         Ok(Chunk {
             length,
             chunk_type,
             data,
-            crc: 0,
+            crc,
         })
     }
 }
