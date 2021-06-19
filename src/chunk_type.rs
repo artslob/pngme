@@ -95,6 +95,14 @@ impl std::fmt::Display for ChunkType {
     }
 }
 
+impl std::cmp::PartialEq for ChunkType {
+    fn eq(&self, other: &Self) -> bool {
+        self.bytes == other.bytes
+    }
+}
+
+impl std::cmp::Eq for ChunkType {}
+
 mod tests {
     use super::*;
     use std::convert::TryFrom;
