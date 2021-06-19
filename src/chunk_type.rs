@@ -1,4 +1,4 @@
-use std::convert::TryInto;
+use std::convert::{TryFrom, TryInto};
 
 enum AncillaryBit {
     Critical,  // UPPERCASE
@@ -35,6 +35,8 @@ impl ChunkType {
     }
 }
 
+// TODO checks for valid chars
+
 impl std::convert::TryFrom<[u8; 4]> for ChunkType {
     type Error = String;
 
@@ -57,6 +59,32 @@ impl std::convert::TryFrom<[u8; 4]> for ChunkType {
             bytes,
             chars,
             string: chars.iter().collect(),
+        })
+    }
+}
+
+impl std::str::FromStr for ChunkType {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let chars = s.chars().collect::<Vec<char>>();
+        let chars = match chars[..] {
+            [a, b, c, d] => [a, b, c, d],
+            _ => return Err("string should contain 4 chars".into()),
+        };
+        Ok(ChunkType {
+            ancillary_bit: AncillaryBit::Critical,
+            private_bit: PrivateBit::Public,
+            reserved_bit: ReservedBit::Reserved,
+            safe_to_copy_bit: SafeToCopyBit::Unsafe,
+            bytes: [
+                u32::from(chars[0]) as u8,
+                u32::from(chars[1]) as u8,
+                u32::from(chars[2]) as u8,
+                u32::from(chars[3]) as u8,
+            ],
+            chars,
+            string: s.into(),
         })
     }
 }
