@@ -3,5 +3,6 @@ image: "rust:latest"
 test:cargo:
   script:
     - rustc --version && cargo --version
+    - rustup component add rustfmt
     - cargo test --workspace --verbose --all --locked
     - cargo fmt --all -- --check
