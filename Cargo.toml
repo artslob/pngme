@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 crc = "1.8.1"
+byteorder = "1.4.3"
+derive_more = "0.99.14"
