@@ -47,11 +47,8 @@ impl std::convert::TryFrom<&[u8]> for Chunk {
         let type_error = Err("Not enough elements to parse type".to_owned());
         let type_bytes: [u8; 4] = <[u8; 4]>::try_from(type_vector).or(type_error)?;
         let chunk_type = ChunkType::try_from(type_bytes)?;
-        let data: Vec<u8> = bytes_iter
-            .by_ref()
-            .take(bytes.len().checked_sub(4 * 3).unwrap_or(0))
-            .copied()
-            .collect();
+        let data_take_count = bytes.len().checked_sub(4 * 3).unwrap_or(0);
+        let data: Vec<u8> = bytes_iter.by_ref().take(data_take_count).copied().collect();
         let data_parse_error = Err("Could not parse length of data".to_owned());
         let data_length: u32 = data.len().try_into().or(data_parse_error)?;
         if length != data_length {
