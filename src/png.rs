@@ -14,11 +14,15 @@ impl Png {
     pub fn chunks(&self) -> &[Chunk] {
         &self.chunks[..]
     }
-    // fn append_chunk(&mut self, chunk: Chunk) {}
-    // fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {}
-    // fn header(&self) -> &[u8; 8] {}
-    // fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {}
-    // fn as_bytes(&self) -> Vec<u8> {}
+    pub fn append_chunk(&mut self, chunk: Chunk) {
+        self.chunks.push(chunk)
+    }
+    // pub fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {}
+    pub fn header(&self) -> &[u8; 8] {
+        &Self::STATIC_HEADER
+    }
+    // pub fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {}
+    // pub fn as_bytes(&self) -> Vec<u8> {}
     // TryFrom<&[u8]>
     // Display
 }
