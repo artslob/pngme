@@ -1,5 +1,4 @@
 use crate::chunk::Chunk;
-use crate::chunk_type::ChunkType;
 
 pub struct Png {
     chunks: Vec<Chunk>,
@@ -17,7 +16,20 @@ impl Png {
     pub fn append_chunk(&mut self, chunk: Chunk) {
         self.chunks.push(chunk)
     }
-    // pub fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {}
+    pub fn remove_chunk(&mut self, chunk_type: &str) -> crate::Result<Chunk> {
+        // TODO try to use find_map()
+        let index = self
+            .chunks
+            .iter()
+            .enumerate()
+            .find(|(i, chunk)| chunk.chunk_type().to_string() == chunk_type)
+            .map(|(i, chunk)| i)
+            .ok_or(String::from(format!(
+                "Chunk with type {} not found",
+                chunk_type
+            )))?;
+        Ok(self.chunks.remove(index))
+    }
     pub fn header(&self) -> &[u8; 8] {
         &Self::STATIC_HEADER
     }
