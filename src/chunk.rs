@@ -4,7 +4,7 @@ use std::convert::TryInto;
 
 #[derive(::derive_more::Display)]
 #[display(fmt = "Chunk {} {}", chunk_type, length)]
-struct Chunk {
+pub struct Chunk {
     length: u32,
     chunk_type: ChunkType,
     data: Vec<u8>,
@@ -12,6 +12,22 @@ struct Chunk {
 }
 
 impl Chunk {
+    pub fn new(chunk_type: ChunkType, data: &[u8]) -> Self {
+        // TODO test
+        let data_for_crc: Vec<u8> = chunk_type
+            .bytes()
+            .iter()
+            .chain(data.iter())
+            .copied()
+            .collect();
+        let crc = ::crc::crc32::checksum_ieee(&data_for_crc[..]);
+        Self {
+            length: data.len() as u32,
+            chunk_type,
+            data: data.iter().copied().collect(),
+            crc,
+        }
+    }
     pub fn length(&self) -> u32 {
         self.length
     }
@@ -29,6 +45,7 @@ impl Chunk {
             .or_else(|x| Err(Box::new(x) as Box<dyn std::error::Error>))
     }
     pub fn as_bytes(&self) -> Vec<u8> {
+        // TODO should return ALL bytes
         self.data.clone()
     }
 }
