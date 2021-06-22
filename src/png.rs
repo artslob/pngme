@@ -38,7 +38,13 @@ impl Png {
             .iter()
             .find(|chunk| chunk.chunk_type().to_string() == chunk_type)
     }
-    // pub fn as_bytes(&self) -> Vec<u8> {}
+    pub fn as_bytes(&self) -> Vec<u8> {
+        Self::STATIC_HEADER
+            .iter()
+            .copied()
+            .chain(self.chunks.iter().flat_map(|chunk| chunk.as_bytes()))
+            .collect()
+    }
     // TryFrom<&[u8]>
     // Display
 }
