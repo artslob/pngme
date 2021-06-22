@@ -45,8 +45,14 @@ impl Chunk {
             .or_else(|x| Err(Box::new(x) as Box<dyn std::error::Error>))
     }
     pub fn as_bytes(&self) -> Vec<u8> {
-        // TODO should return ALL bytes
-        self.data.clone()
+        self.length
+            .to_be_bytes()
+            .iter()
+            .chain(self.chunk_type.bytes().iter())
+            .chain(self.data.iter())
+            .chain(self.crc.to_be_bytes().iter())
+            .copied()
+            .collect()
     }
 }
 
@@ -100,21 +106,24 @@ mod tests {
 
     use std::convert::TryFrom;
 
-    fn testing_chunk() -> Chunk {
+    fn testing_bytes() -> Vec<u8> {
         let data_length: u32 = 42;
         let chunk_type = "RuSt".as_bytes();
         let message_bytes = "This is where your secret message will be!".as_bytes();
         let crc: u32 = 2882656334;
 
-        let chunk_data: Vec<u8> = data_length
+        data_length
             .to_be_bytes()
             .iter()
             .chain(chunk_type.iter())
             .chain(message_bytes.iter())
             .chain(crc.to_be_bytes().iter())
             .copied()
-            .collect();
+            .collect()
+    }
 
+    fn testing_chunk() -> Chunk {
+        let chunk_data = testing_bytes();
         Chunk::try_from(chunk_data.as_ref()).unwrap()
     }
 
@@ -122,6 +131,19 @@ mod tests {
     fn test_chunk_length() {
         let chunk = testing_chunk();
         assert_eq!(chunk.length(), 42);
+    }
+
+    #[test]
+    fn test_chunk_data() {
+        let chunk = testing_chunk();
+        let msg = "This is where your secret message will be!".as_bytes();
+        assert_eq!(chunk.data(), msg);
+    }
+
+    #[test]
+    fn test_chunk_as_bytes() {
+        let chunk = testing_chunk();
+        assert_eq!(chunk.as_bytes(), testing_bytes());
     }
 
     #[test]
