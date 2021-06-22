@@ -13,7 +13,6 @@ pub struct Chunk {
 
 impl Chunk {
     pub fn new(chunk_type: ChunkType, data: &[u8]) -> Self {
-        // TODO test
         let data_for_crc: Vec<u8> = chunk_type
             .bytes()
             .iter()
@@ -105,6 +104,7 @@ mod tests {
     use super::*;
 
     use std::convert::TryFrom;
+    use std::str::FromStr;
 
     fn testing_bytes() -> Vec<u8> {
         let data_length: u32 = 42;
@@ -125,6 +125,15 @@ mod tests {
     fn testing_chunk() -> Chunk {
         let chunk_data = testing_bytes();
         Chunk::try_from(chunk_data.as_ref()).unwrap()
+    }
+
+    #[test]
+    fn test_chunk_new() {
+        let left = testing_chunk();
+        let chunk_type = ChunkType::from_str("RuSt").unwrap();
+        let msg = "This is where your secret message will be!".as_bytes();
+        let right = Chunk::new(chunk_type, msg);
+        assert_eq!(left.as_bytes(), right.as_bytes());
     }
 
     #[test]
