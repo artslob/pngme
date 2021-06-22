@@ -1,4 +1,5 @@
 use crate::chunk::Chunk;
+use byteorder::ByteOrder;
 
 pub struct Png {
     chunks: Vec<Chunk>,
@@ -45,8 +46,35 @@ impl Png {
             .chain(self.chunks.iter().flat_map(|chunk| chunk.as_bytes()))
             .collect()
     }
-    // TryFrom<&[u8]>
     // Display
+}
+
+impl std::convert::TryFrom<&[u8]> for Png {
+    type Error = String;
+
+    fn try_from(bytes: &[u8]) -> Result<Png, Self::Error> {
+        let mut bytes_iter = bytes.iter();
+        let header: Vec<u8> = bytes_iter
+            .by_ref()
+            .take(Self::STATIC_HEADER.len())
+            .copied()
+            .collect();
+        if header != Self::STATIC_HEADER {
+            return Err("Header does not equal to PNG file signature".to_owned());
+        }
+        loop {
+            let length: Vec<u8> = bytes_iter.by_ref().take(4).copied().collect();
+            if length.len() == 0 {
+                break;
+            }
+            if length.len() != 4 {
+                return Err("Not enough bytes to parse length".to_owned());
+            }
+            let length = byteorder::BigEndian::read_u32(&length[..]);
+            todo!("read length + 8 bytes and decode chunk")
+        }
+        Err("".to_owned())
+    }
 }
 
 #[cfg(test)]
