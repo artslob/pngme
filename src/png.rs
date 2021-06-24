@@ -62,6 +62,7 @@ impl std::convert::TryFrom<&[u8]> for Png {
         if header != Self::STATIC_HEADER {
             return Err("Header does not equal to PNG file signature".to_owned());
         }
+        let mut chunks: Vec<Chunk> = vec![];
         loop {
             let length: Vec<u8> = bytes_iter.by_ref().take(4).copied().collect();
             if length.len() == 0 {
@@ -71,9 +72,15 @@ impl std::convert::TryFrom<&[u8]> for Png {
                 return Err("Not enough bytes to parse length".to_owned());
             }
             let length = byteorder::BigEndian::read_u32(&length[..]);
-            todo!("read length + 8 bytes and decode chunk")
+            let data: Vec<u8> = length
+                .to_be_bytes()
+                .iter()
+                .copied()
+                .chain(bytes_iter.by_ref().take((length + 8) as usize).copied())
+                .collect();
+            chunks.push(Chunk::try_from(&data[..])?)
         }
-        Err("".to_owned())
+        Ok(Png::from_chunks(chunks))
     }
 }
 
