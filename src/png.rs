@@ -46,7 +46,12 @@ impl Png {
             .chain(self.chunks.iter().flat_map(|chunk| chunk.as_bytes()))
             .collect()
     }
-    // Display
+}
+
+impl std::fmt::Display for Png {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Png with {} chunks", self.chunks.len())
+    }
 }
 
 impl std::convert::TryFrom<&[u8]> for Png {
