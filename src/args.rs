@@ -21,16 +21,22 @@ pub enum SubCommand {
 /// Encodes a message into a PNG file and saves the result
 #[derive(Clap)]
 pub struct Encode {
+    /// Path to png file
     file_path: String,
+    /// Chunk type is 4 ASCII letters
     chunk_type: String,
+    /// Just any text
     message: String,
-    output: Option<String>,
+    /// Save result to new file
+    output_file: Option<String>,
 }
 
 /// Searches for a message hidden in a PNG file and prints the message if one is found
 #[derive(Clap)]
 pub struct Decode {
+    /// Path to png file
     file_path: String,
+    /// Chunk type is 4 ASCII letters
     chunk_type: String, // TODO maybe set default to some type?
 }
 
@@ -38,14 +44,18 @@ pub struct Decode {
 // TODO: print removed message and handle saving to another file
 #[derive(Clap)]
 pub struct Remove {
+    /// Path to png file
     file_path: String,
+    /// Chunk type is 4 ASCII letters
     chunk_type: String,
-    output: Option<String>,
+    /// Save result to new file
+    output_file: Option<String>,
 }
 
 /// Prints all of the chunks in a PNG file
 #[derive(Clap)]
 pub struct Print {
+    /// Path to png file
     file_path: String,
 }
 
