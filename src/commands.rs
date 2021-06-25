@@ -1,9 +1,11 @@
 use crate::args;
 use crate::chunk::Chunk;
+use crate::chunk_type::ChunkType;
 use crate::png;
 use std::convert::TryFrom;
 use std::error::Error;
 use std::fs;
+use std::str::FromStr;
 
 fn read_png(file_path: &str) -> crate::Result<png::Png> {
     let bytes = fs::read(file_path)?;
@@ -30,7 +32,7 @@ pub fn decode(cmd: args::Decode) -> crate::Result<()> {
             println!("{}", chunk);
             match chunk.data_as_string() {
                 Ok(s) => println!("Data: {}", s),
-                Err(e) => {
+                Err(_) => {
                     println!("Data: <could not parse data as UTF-8>")
                 }
             }
@@ -41,7 +43,17 @@ pub fn decode(cmd: args::Decode) -> crate::Result<()> {
 
 pub fn remove(cmd: args::Remove) -> crate::Result<()> {
     let mut image = read_png(&cmd.file_path)?;
-    image.remove_chunk(&cmd.chunk_type);
+    image.remove_chunk(&cmd.chunk_type); // TODO handle result
+    fs::write(&cmd.file_path, image.as_bytes())?;
+    Ok(())
+}
+
+pub fn encode(cmd: args::Encode) -> crate::Result<()> {
+    let mut image = read_png(&cmd.file_path)?;
+    image.append_chunk(Chunk::new(
+        ChunkType::from_str(&cmd.chunk_type)?,
+        cmd.message.as_bytes(),
+    ));
     fs::write(&cmd.file_path, image.as_bytes())?;
     Ok(())
 }

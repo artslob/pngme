@@ -12,8 +12,11 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 fn main() -> Result<()> {
     let opts = crate::args::parse_cli();
+    // TODO merge match to 1 result?
     match opts.sub_cmd {
-        SubCommand::Encode(_) => {}
+        SubCommand::Encode(cmd) => {
+            crate::commands::encode(cmd)?;
+        }
         SubCommand::Decode(cmd) => {
             crate::commands::decode(cmd)?;
         }
