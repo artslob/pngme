@@ -5,14 +5,14 @@ use std::convert::TryFrom;
 use std::error::Error;
 use std::fs;
 
-fn read_png(file_path: String) -> crate::Result<png::Png> {
+fn read_png(file_path: &str) -> crate::Result<png::Png> {
     let bytes = fs::read(file_path)?;
     let image = png::Png::try_from(&bytes[..])?;
     Ok(image)
 }
 
 pub fn print(cmd: args::Print) -> crate::Result<()> {
-    let image = read_png(cmd.file_path)?;
+    let image = read_png(&cmd.file_path)?;
     for (i, chunk) in image.chunks().iter().enumerate() {
         println!("[{}] {}", i + 1, chunk);
     }
@@ -20,7 +20,7 @@ pub fn print(cmd: args::Print) -> crate::Result<()> {
 }
 
 pub fn decode(cmd: args::Decode) -> crate::Result<()> {
-    let image = read_png(cmd.file_path)?;
+    let image = read_png(&cmd.file_path)?;
     let chunk = image.chunk_by_type(&cmd.chunk_type);
     match chunk {
         None => {
@@ -36,5 +36,12 @@ pub fn decode(cmd: args::Decode) -> crate::Result<()> {
             }
         }
     }
+    Ok(())
+}
+
+pub fn remove(cmd: args::Remove) -> crate::Result<()> {
+    let mut image = read_png(&cmd.file_path)?;
+    image.remove_chunk(&cmd.chunk_type);
+    fs::write(&cmd.file_path, image.as_bytes())?;
     Ok(())
 }

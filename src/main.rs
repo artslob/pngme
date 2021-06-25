@@ -17,7 +17,9 @@ fn main() -> Result<()> {
         SubCommand::Decode(cmd) => {
             crate::commands::decode(cmd)?;
         }
-        SubCommand::Remove(_) => {}
+        SubCommand::Remove(cmd) => {
+            crate::commands::remove(cmd)?;
+        }
         SubCommand::Print(cmd) => {
             crate::commands::print(cmd)?;
         }
