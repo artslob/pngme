@@ -1,13 +1,14 @@
 use ::clap::{AppSettings, Clap};
 
 // TODO add descriptions for arg values
+// TODO try use Path type for filepath args
 
 #[derive(Clap)]
 #[clap(setting = AppSettings::ColoredHelp)]
 #[clap(version = "1.0", author = "artslob <artslob@yandex.ru>")]
 pub struct Opts {
     #[clap(subcommand)]
-    sub_cmd: SubCommand,
+    pub(crate) sub_cmd: SubCommand,
 }
 
 #[derive(Clap)]
@@ -22,22 +23,22 @@ pub enum SubCommand {
 #[derive(Clap)]
 pub struct Encode {
     /// Path to png file
-    file_path: String,
+    pub(crate) file_path: String,
     /// Chunk type is 4 ASCII letters
-    chunk_type: String,
+    pub(crate) chunk_type: String,
     /// Just any text
-    message: String,
+    pub(crate) message: String,
     /// Save result to new file
-    output_file: Option<String>,
+    pub(crate) output_file: Option<String>,
 }
 
 /// Searches for a message hidden in a PNG file and prints the message if one is found
 #[derive(Clap)]
 pub struct Decode {
     /// Path to png file
-    file_path: String,
+    pub(crate) file_path: String,
     /// Chunk type is 4 ASCII letters
-    chunk_type: String, // TODO maybe set default to some type?
+    pub(crate) chunk_type: String, // TODO maybe set default to some type?
 }
 
 /// Removes a chunk from a PNG file and saves the result
@@ -45,18 +46,18 @@ pub struct Decode {
 #[derive(Clap)]
 pub struct Remove {
     /// Path to png file
-    file_path: String,
+    pub(crate) file_path: String,
     /// Chunk type is 4 ASCII letters
-    chunk_type: String,
+    pub(crate) chunk_type: String,
     /// Save result to new file
-    output_file: Option<String>,
+    pub(crate) output_file: Option<String>,
 }
 
 /// Prints all of the chunks in a PNG file
 #[derive(Clap)]
 pub struct Print {
     /// Path to png file
-    file_path: String,
+    pub(crate) file_path: String,
 }
 
 pub fn parse_cli() -> Opts {

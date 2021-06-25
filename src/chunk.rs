@@ -3,7 +3,7 @@ use byteorder::ByteOrder;
 use std::convert::TryInto;
 
 #[derive(::derive_more::Display)]
-#[display(fmt = "Chunk {} {}", chunk_type, length)]
+#[display(fmt = "Chunk \"{}\" len:{}", chunk_type, length)]
 pub struct Chunk {
     length: u32,
     chunk_type: ChunkType,
@@ -247,6 +247,6 @@ mod tests {
     #[test]
     pub fn test_chunk_trait_impls() {
         let chunk = testing_chunk();
-        assert_eq!(format!("{}", chunk), "Chunk RuSt 42")
+        assert_eq!(format!("{}", chunk), "Chunk \"RuSt\" len:42")
     }
 }
