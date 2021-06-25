@@ -14,7 +14,9 @@ fn main() -> Result<()> {
     let opts = crate::args::parse_cli();
     match opts.sub_cmd {
         SubCommand::Encode(_) => {}
-        SubCommand::Decode(_) => {}
+        SubCommand::Decode(cmd) => {
+            crate::commands::decode(cmd)?;
+        }
         SubCommand::Remove(_) => {}
         SubCommand::Print(cmd) => {
             crate::commands::print(cmd)?;

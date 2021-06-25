@@ -35,6 +35,7 @@ impl Png {
         &Self::STANDARD_HEADER
     }
     pub fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
+        // TODO accept ChunkType type and return Result<>
         self.chunks
             .iter()
             .find(|chunk| chunk.chunk_type().to_string() == chunk_type)
