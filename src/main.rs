@@ -1,6 +1,4 @@
 use crate::args::SubCommand;
-use std::convert::TryInto;
-
 mod args;
 mod chunk;
 mod chunk_type;

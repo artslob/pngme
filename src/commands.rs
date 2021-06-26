@@ -3,7 +3,6 @@ use crate::chunk::Chunk;
 use crate::chunk_type::ChunkType;
 use crate::png;
 use std::convert::TryFrom;
-use std::error::Error;
 use std::fs;
 use std::str::FromStr;
 
