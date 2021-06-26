@@ -1,5 +1,9 @@
-use crate::chunk::Chunk;
+use std::str::FromStr;
+
 use byteorder::ByteOrder;
+
+use crate::chunk::Chunk;
+use crate::chunk_type::ChunkType;
 
 pub struct Png {
     chunks: Vec<Chunk>,
@@ -18,12 +22,12 @@ impl Png {
         self.chunks.push(chunk)
     }
     pub fn remove_chunk(&mut self, chunk_type: &str) -> crate::Result<Chunk> {
-        // TODO accept ChunkType type and return Result<>
+        let chunk_type = ChunkType::from_str(chunk_type)?;
         let index = self
             .chunks
             .iter()
             .enumerate()
-            .find_map(|(i, chunk)| (chunk.chunk_type().to_string() == chunk_type).then(|| i))
+            .find_map(|(i, chunk)| (chunk.chunk_type() == &chunk_type).then(|| i))
             .ok_or(format!("Chunk with type {} not found", chunk_type))?;
         Ok(self.chunks.remove(index))
     }
@@ -88,11 +92,13 @@ impl std::convert::TryFrom<&[u8]> for Png {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::chunk::Chunk;
-    use crate::chunk_type::ChunkType;
     use std::convert::TryFrom;
     use std::str::FromStr;
+
+    use crate::chunk::Chunk;
+    use crate::chunk_type::ChunkType;
+
+    use super::*;
 
     fn testing_chunks() -> Vec<Chunk> {
         vec![
