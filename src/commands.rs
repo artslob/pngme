@@ -22,7 +22,8 @@ pub fn print(cmd: args::Print) -> crate::Result<()> {
 
 pub fn decode(cmd: args::Decode) -> crate::Result<()> {
     let image = read_png(&cmd.file_path)?;
-    let chunk = image.chunk_by_type(&cmd.chunk_type);
+    let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
+    let chunk = image.chunk_by_type(&chunk_type);
     match chunk {
         None => {
             println!("Chunk with type {:?} not found", cmd.chunk_type);

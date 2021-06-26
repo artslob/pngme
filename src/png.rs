@@ -22,6 +22,7 @@ impl Png {
         self.chunks.push(chunk)
     }
     pub fn remove_chunk(&mut self, chunk_type: &str) -> crate::Result<Chunk> {
+        // TODO get chunk type as argument
         let chunk_type = ChunkType::from_str(chunk_type)?;
         let index = self
             .chunks
@@ -34,11 +35,10 @@ impl Png {
     pub fn header(&self) -> &[u8; 8] {
         &Self::STANDARD_HEADER
     }
-    pub fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
-        // TODO accept ChunkType type and return Result<>
+    pub fn chunk_by_type(&self, chunk_type: &ChunkType) -> Option<&Chunk> {
         self.chunks
             .iter()
-            .find(|chunk| chunk.chunk_type().to_string() == chunk_type)
+            .find(|chunk| chunk.chunk_type() == chunk_type)
     }
     pub fn as_bytes(&self) -> Vec<u8> {
         Self::STANDARD_HEADER
@@ -195,7 +195,8 @@ mod tests {
     #[test]
     fn test_chunk_by_type() {
         let png = testing_png();
-        let chunk = png.chunk_by_type("FrSt").unwrap();
+        let chunk_type = ChunkType::from_str("FrSt").unwrap();
+        let chunk = png.chunk_by_type(&chunk_type).unwrap();
         assert_eq!(&chunk.chunk_type().to_string(), "FrSt");
         assert_eq!(&chunk.data_as_string().unwrap(), "I am the first chunk");
     }
@@ -204,7 +205,8 @@ mod tests {
     fn test_append_chunk() {
         let mut png = testing_png();
         png.append_chunk(chunk_from_strings("TeSt", "Message").unwrap());
-        let chunk = png.chunk_by_type("TeSt").unwrap();
+        let chunk_type = ChunkType::from_str("TeSt").unwrap();
+        let chunk = png.chunk_by_type(&chunk_type).unwrap();
         assert_eq!(&chunk.chunk_type().to_string(), "TeSt");
         assert_eq!(&chunk.data_as_string().unwrap(), "Message");
     }
@@ -214,7 +216,8 @@ mod tests {
         let mut png = testing_png();
         png.append_chunk(chunk_from_strings("TeSt", "Message").unwrap());
         png.remove_chunk("TeSt").unwrap();
-        let chunk = png.chunk_by_type("TeSt");
+        let chunk_type = ChunkType::from_str("TeSt").unwrap();
+        let chunk = png.chunk_by_type(&chunk_type);
         assert!(chunk.is_none());
     }
 
