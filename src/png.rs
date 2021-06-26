@@ -18,13 +18,12 @@ impl Png {
         self.chunks.push(chunk)
     }
     pub fn remove_chunk(&mut self, chunk_type: &str) -> crate::Result<Chunk> {
-        // TODO try to use find_map()
+        // TODO accept ChunkType type and return Result<>
         let index = self
             .chunks
             .iter()
             .enumerate()
-            .find(|(i, chunk)| chunk.chunk_type().to_string() == chunk_type)
-            .map(|(i, chunk)| i)
+            .find_map(|(i, chunk)| (chunk.chunk_type().to_string() == chunk_type).then(|| i))
             .ok_or(format!("Chunk with type {} not found", chunk_type))?;
         Ok(self.chunks.remove(index))
     }
