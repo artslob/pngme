@@ -25,10 +25,7 @@ impl Png {
             .enumerate()
             .find(|(i, chunk)| chunk.chunk_type().to_string() == chunk_type)
             .map(|(i, chunk)| i)
-            .ok_or(String::from(format!(
-                "Chunk with type {} not found",
-                chunk_type
-            )))?;
+            .ok_or(format!("Chunk with type {} not found", chunk_type))?;
         Ok(self.chunks.remove(index))
     }
     pub fn header(&self) -> &[u8; 8] {
