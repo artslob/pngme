@@ -12,6 +12,13 @@ fn read_png(file_path: &str) -> crate::Result<png::Png> {
     Ok(image)
 }
 
+fn data_as_string(chunk: &Chunk) -> String {
+    match chunk.data_as_string() {
+        Ok(s) => format!("Data: {}", s),
+        Err(_) => "Could not parse data as UTF-8".to_string(),
+    }
+}
+
 pub fn print(cmd: args::Print) -> crate::Result<()> {
     let image = read_png(&cmd.file_path)?;
     for (i, chunk) in image.chunks().iter().enumerate() {
@@ -30,12 +37,7 @@ pub fn decode(cmd: args::Decode) -> crate::Result<()> {
         }
         Some(chunk) => {
             println!("{}", chunk);
-            match chunk.data_as_string() {
-                Ok(s) => println!("Data: {}", s),
-                Err(_) => {
-                    println!("Data: <could not parse data as UTF-8>")
-                }
-            }
+            println!("{}", data_as_string(chunk));
         }
     }
     Ok(())
@@ -44,7 +46,9 @@ pub fn decode(cmd: args::Decode) -> crate::Result<()> {
 pub fn remove(cmd: args::Remove) -> crate::Result<()> {
     let mut image = read_png(&cmd.file_path)?;
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
-    image.remove_chunk(&chunk_type)?;
+    let chunk = image.remove_chunk(&chunk_type)?;
+    println!("{}", chunk);
+    println!("{}", data_as_string(&chunk));
     fs::write(&cmd.file_path, image.as_bytes())?;
     Ok(())
 }

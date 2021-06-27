@@ -42,7 +42,7 @@ pub struct Decode {
 }
 
 /// Removes a chunk from a PNG file and saves the result
-// TODO: print removed message and handle saving to another file
+// TODO: handle saving to another file
 #[derive(Clap)]
 pub struct Remove {
     /// Path to png file
