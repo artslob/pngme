@@ -6,6 +6,7 @@ use ::clap::{AppSettings, Clap};
 #[derive(Clap)]
 #[clap(setting = AppSettings::ColoredHelp)]
 #[clap(version = "1.0", author = "artslob <artslob@yandex.ru>")]
+#[clap(about = "Utility that lets you hide secret messages in PNG files")]
 pub struct Opts {
     #[clap(subcommand)]
     pub(crate) sub_cmd: SubCommand,
