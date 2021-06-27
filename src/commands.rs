@@ -60,6 +60,7 @@ pub fn encode(cmd: args::Encode) -> crate::Result<()> {
         ChunkType::from_str(&cmd.chunk_type)?,
         cmd.message.as_bytes(),
     ));
-    fs::write(&cmd.file_path, image.as_bytes())?;
+    let output_path = cmd.output_file.unwrap_or(cmd.file_path);
+    fs::write(output_path, image.as_bytes())?;
     Ok(())
 }

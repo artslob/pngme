@@ -1,8 +1,5 @@
 use ::clap::{AppSettings, Clap};
 
-// TODO add descriptions for arg values
-// TODO try use Path type for filepath args
-
 #[derive(Clap)]
 #[clap(setting = AppSettings::ColoredHelp)]
 #[clap(version = "1.0", author = "artslob <artslob@yandex.ru>")]
@@ -26,7 +23,7 @@ pub struct Encode {
     /// Path to png file
     pub(crate) file_path: String,
     /// Chunk type is 4 ASCII letters
-    pub(crate) chunk_type: String,
+    pub(crate) chunk_type: String, // TODO maybe set default to some type?
     /// Just any text
     pub(crate) message: String,
     /// Save result to new file
@@ -39,10 +36,10 @@ pub struct Decode {
     /// Path to png file
     pub(crate) file_path: String,
     /// Chunk type is 4 ASCII letters
-    pub(crate) chunk_type: String, // TODO maybe set default to some type?
+    pub(crate) chunk_type: String,
 }
 
-/// Removes a chunk from a PNG file and saves the result (optionally to another file)
+/// Removes a chunk from a PNG file and saves the result
 #[derive(Clap)]
 pub struct Remove {
     /// Path to png file
