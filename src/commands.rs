@@ -56,10 +56,8 @@ pub fn remove(cmd: args::Remove) -> crate::Result<()> {
 
 pub fn encode(cmd: args::Encode) -> crate::Result<()> {
     let mut image = read_png(&cmd.file_path)?;
-    image.append_chunk(Chunk::new(
-        ChunkType::from_str(&cmd.chunk_type)?,
-        cmd.message.as_bytes(),
-    ));
+    let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
+    image.append_chunk(Chunk::new(chunk_type, cmd.message.as_bytes()));
     let output_path = cmd.output_file.unwrap_or(cmd.file_path);
     fs::write(output_path, image.as_bytes())?;
     Ok(())
