@@ -23,7 +23,7 @@ pub struct Encode {
     /// Path to png file
     pub(crate) file_path: String,
     /// Chunk type is 4 ASCII letters
-    pub(crate) chunk_type: String, // TODO maybe set default to some type?
+    pub(crate) chunk_type: String,
     /// Just any text
     pub(crate) message: String,
     /// Save result to new file
