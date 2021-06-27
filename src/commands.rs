@@ -49,7 +49,8 @@ pub fn remove(cmd: args::Remove) -> crate::Result<()> {
     let chunk = image.remove_chunk(&chunk_type)?;
     println!("{}", chunk);
     println!("{}", data_as_string(&chunk));
-    fs::write(&cmd.file_path, image.as_bytes())?;
+    let output_path = cmd.output_file.unwrap_or(cmd.file_path);
+    fs::write(output_path, image.as_bytes())?;
     Ok(())
 }
 

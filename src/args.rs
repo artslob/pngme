@@ -41,8 +41,7 @@ pub struct Decode {
     pub(crate) chunk_type: String, // TODO maybe set default to some type?
 }
 
-/// Removes a chunk from a PNG file and saves the result
-// TODO: handle saving to another file
+/// Removes a chunk from a PNG file and saves the result (optionally to another file)
 #[derive(Clap)]
 pub struct Remove {
     /// Path to png file
