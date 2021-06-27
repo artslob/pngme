@@ -43,7 +43,8 @@ pub fn decode(cmd: args::Decode) -> crate::Result<()> {
 
 pub fn remove(cmd: args::Remove) -> crate::Result<()> {
     let mut image = read_png(&cmd.file_path)?;
-    image.remove_chunk(&cmd.chunk_type)?;
+    let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
+    image.remove_chunk(&chunk_type)?;
     fs::write(&cmd.file_path, image.as_bytes())?;
     Ok(())
 }

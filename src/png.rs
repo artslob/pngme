@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use byteorder::ByteOrder;
 
 use crate::chunk::Chunk;
@@ -21,14 +19,12 @@ impl Png {
     pub fn append_chunk(&mut self, chunk: Chunk) {
         self.chunks.push(chunk)
     }
-    pub fn remove_chunk(&mut self, chunk_type: &str) -> crate::Result<Chunk> {
-        // TODO get chunk type as argument
-        let chunk_type = ChunkType::from_str(chunk_type)?;
+    pub fn remove_chunk(&mut self, chunk_type: &ChunkType) -> crate::Result<Chunk> {
         let index = self
             .chunks
             .iter()
             .enumerate()
-            .find_map(|(i, chunk)| (chunk.chunk_type() == &chunk_type).then(|| i))
+            .find_map(|(i, chunk)| (chunk.chunk_type() == chunk_type).then(|| i))
             .ok_or(format!("Chunk with type {} not found", chunk_type))?;
         Ok(self.chunks.remove(index))
     }
@@ -215,7 +211,8 @@ mod tests {
     fn test_remove_chunk() {
         let mut png = testing_png();
         png.append_chunk(chunk_from_strings("TeSt", "Message").unwrap());
-        png.remove_chunk("TeSt").unwrap();
+        let chunk_type = ChunkType::from_str("TeSt").unwrap();
+        png.remove_chunk(&chunk_type).unwrap();
         let chunk_type = ChunkType::from_str("TeSt").unwrap();
         let chunk = png.chunk_by_type(&chunk_type);
         assert!(chunk.is_none());
