@@ -55,6 +55,9 @@ pub struct Remove {
 pub struct Print {
     /// Path to png file
     pub(crate) file_path: String,
+    /// Get detailed information about chunks
+    #[clap(long)]
+    pub(crate) verbose: bool,
 }
 
 pub fn parse_cli() -> Opts {

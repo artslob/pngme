@@ -15,8 +15,20 @@ fn data_as_string(chunk: &Chunk) -> String {
 
 pub fn print(cmd: args::Print) -> crate::Result<()> {
     let image = png::Png::from_file(&cmd.file_path)?;
+    let indent = " ".repeat(4);
     for (i, chunk) in image.chunks().iter().enumerate() {
         println!("[{}] {}", i + 1, chunk);
+        if cmd.verbose {
+            let chunk_type = chunk.chunk_type();
+            let is_reserved_bit_valid = chunk_type.is_reserved_bit_valid();
+            let is_safe_to_copy = chunk_type.is_safe_to_copy();
+            println!("{}is critical: {}", indent, chunk_type.is_critical());
+            println!("{}is public: {}", indent, chunk_type.is_public());
+            println!("{}has valid reserve bit: {}", indent, is_reserved_bit_valid);
+            println!("{}is safe to copy: {}", indent, is_safe_to_copy);
+            println!("{}crc as dec: {}", indent, chunk.crc());
+            println!("{}crc as hex: {:x}", indent, chunk.crc());
+        }
     }
     Ok(())
 }
