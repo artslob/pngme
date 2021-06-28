@@ -35,9 +35,6 @@ impl Png {
             .ok_or(format!("Chunk with type {} not found", chunk_type))?;
         Ok(self.chunks.remove(index))
     }
-    pub fn header(&self) -> &[u8; 8] {
-        &Self::STANDARD_HEADER
-    }
     pub fn chunk_by_type(&self, chunk_type: &ChunkType) -> Option<&Chunk> {
         self.chunks
             .iter()
