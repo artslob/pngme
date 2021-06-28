@@ -1,3 +1,6 @@
+use std::convert::TryFrom;
+use std::fs;
+
 use byteorder::ByteOrder;
 
 use crate::chunk::Chunk;
@@ -10,6 +13,10 @@ pub struct Png {
 impl Png {
     pub const STANDARD_HEADER: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
 
+    pub fn from_file(file_path: &str) -> crate::Result<Self> {
+        let bytes = fs::read(file_path)?;
+        Ok(Self::try_from(&bytes[..])?)
+    }
     pub fn from_chunks(chunks: Vec<Chunk>) -> Self {
         Self { chunks }
     }
