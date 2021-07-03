@@ -66,14 +66,14 @@ impl std::convert::TryFrom<[u8; 4]> for ChunkType {
 impl std::str::FromStr for ChunkType {
     type Err = String;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let chars = s.chars().collect::<Vec<char>>();
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        let chars = value.chars().collect::<Vec<char>>();
         let chars = match chars[..] {
-            [a, b, c, d] => [
-                Self::validate_char(a)?,
-                Self::validate_char(b)?,
-                Self::validate_char(c)?,
-                Self::validate_char(d)?,
+            [first, second, third, forth] => [
+                Self::validate_char(first)?,
+                Self::validate_char(second)?,
+                Self::validate_char(third)?,
+                Self::validate_char(forth)?,
             ],
             _ => return Err("string should contain 4 chars".into()),
         };
@@ -89,7 +89,7 @@ impl std::str::FromStr for ChunkType {
                 u32::from(chars[3]) as u8,
             ],
             chars,
-            string: s.into(),
+            string: value.into(),
         })
     }
 }
@@ -229,35 +229,26 @@ mod tests {
 
     #[test]
     pub fn test_ancillary_bit_char() {
-        assert_eq!(ChunkType::from_str("AbCd").unwrap().is_critical(), true);
-        assert_eq!(ChunkType::from_str("abCd").unwrap().is_critical(), false);
+        assert!(ChunkType::from_str("AbCd").unwrap().is_critical());
+        assert!(!ChunkType::from_str("abCd").unwrap().is_critical());
     }
 
     #[test]
     pub fn test_private_bit_char() {
-        assert_eq!(ChunkType::from_str("ABCd").unwrap().is_public(), true);
-        assert_eq!(ChunkType::from_str("abCd").unwrap().is_public(), false);
+        assert!(ChunkType::from_str("ABCd").unwrap().is_public());
+        assert!(!ChunkType::from_str("abCd").unwrap().is_public());
     }
 
     #[test]
     pub fn test_reserved_bit_char() {
-        assert_eq!(
-            ChunkType::from_str("ABCd").unwrap().is_reserved_bit_valid(),
-            true
-        );
-        assert_eq!(
-            ChunkType::from_str("ABcd").unwrap().is_reserved_bit_valid(),
-            false
-        );
-        assert_eq!(ChunkType::from_str("ABcd").unwrap().is_valid(), false);
+        assert!(ChunkType::from_str("ABCd").unwrap().is_reserved_bit_valid());
+        assert!(!ChunkType::from_str("ABcd").unwrap().is_reserved_bit_valid());
+        assert!(!ChunkType::from_str("ABcd").unwrap().is_valid());
     }
 
     #[test]
     pub fn test_safe_to_copy_bit_char() {
-        assert_eq!(ChunkType::from_str("ABCd").unwrap().is_safe_to_copy(), true);
-        assert_eq!(
-            ChunkType::from_str("abCD").unwrap().is_safe_to_copy(),
-            false
-        );
+        assert!(ChunkType::from_str("ABCd").unwrap().is_safe_to_copy());
+        assert!(!ChunkType::from_str("abCD").unwrap().is_safe_to_copy());
     }
 }

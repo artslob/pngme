@@ -70,14 +70,14 @@ impl std::convert::TryFrom<&[u8]> for Png {
         }
         let mut chunks: Vec<Chunk> = vec![];
         loop {
-            let length: Vec<u8> = bytes_iter.by_ref().take(4).copied().collect();
-            if length.len() == 0 {
+            let length_vec: Vec<u8> = bytes_iter.by_ref().take(4).copied().collect();
+            if length_vec.is_empty() {
                 break;
             }
-            if length.len() != 4 {
+            if length_vec.len() != 4 {
                 return Err("Not enough bytes to parse length".to_owned());
             }
-            let length = byteorder::BigEndian::read_u32(&length[..]);
+            let length = byteorder::BigEndian::read_u32(&length_vec[..]);
             let data: Vec<u8> = length
                 .to_be_bytes()
                 .iter()
