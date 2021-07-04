@@ -13,12 +13,11 @@ fn print_chunk_to_stdout(chunk: &Chunk, raw: bool) -> crate::Result<()> {
         out.write_all(chunk.data())?;
         out.flush()?;
     } else {
-        println!("{}", chunk);
         let data = match chunk.data_as_string() {
             Ok(s) => format!("Data: {}", s),
             Err(_) => "Could not parse data as UTF-8".to_string(),
         };
-        println!("{}", data);
+        println!("{}\n{}", chunk, data);
     }
     Ok(())
 }
