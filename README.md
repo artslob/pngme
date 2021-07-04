@@ -97,3 +97,23 @@ $ ./target/release/pngme print images/dice.png
 [6] Chunk "IDAT" len:45941
 [7] Chunk "IEND" len:0
 ```
+Also, data can be encoded and decoded as raw bytes:
+```bash
+$ cat images/icon.png | ./target/release/pngme encode images/dice.png RuSt -o out.png
+
+$ ./target/release/pngme print out.png
+[1] Chunk "IHDR" len:13
+[2] Chunk "sRGB" len:1
+[3] Chunk "gAMA" len:4
+[4] Chunk "pHYs" len:9
+[5] Chunk "IDAT" len:65445
+[6] Chunk "IDAT" len:45941
+[7] Chunk "IEND" len:0
+[8] Chunk "RuSt" len:8434
+
+$ ./target/release/pngme decode out.png RuSt --raw | sha256sum
+faf6c846f171423c820a400164300d96197656d2d553c5a98ca41d7e36c339af  -
+
+$ sha256sum images/icon.png
+faf6c846f171423c820a400164300d96197656d2d553c5a98ca41d7e36c339af  images/icon.png
+```

@@ -26,7 +26,8 @@ pub struct Encode {
     pub(crate) chunk_type: String,
     /// Just any text
     pub(crate) message: Option<String>,
-    /// Save png file without removed chunk to new file
+    /// Save png file with added chunk to new file
+    #[clap(short, long)]
     pub(crate) output_file: Option<String>,
 }
 
@@ -37,7 +38,7 @@ pub struct Decode {
     pub(crate) file_path: String,
     /// Chunk type is 4 ASCII letters
     pub(crate) chunk_type: String,
-    /// If data should go as raw unescaped bytes to stdout
+    /// Set when data should go as raw unescaped bytes to stdout
     #[clap(long)]
     pub(crate) raw: bool,
 }
@@ -49,9 +50,10 @@ pub struct Remove {
     pub(crate) file_path: String,
     /// Chunk type is 4 ASCII letters
     pub(crate) chunk_type: String,
-    /// Save png file without removed chunk to new file
+    /// Save png file with removed chunk to new file
+    #[clap(short, long)]
     pub(crate) output_file: Option<String>,
-    /// If data should go as raw unescaped bytes to stdout
+    /// Set when data should go as raw unescaped bytes to stdout
     #[clap(long)]
     pub(crate) raw: bool,
 }
