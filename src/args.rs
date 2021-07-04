@@ -26,7 +26,7 @@ pub struct Encode {
     pub(crate) chunk_type: String,
     /// Just any text
     pub(crate) message: Option<String>,
-    /// Save result to new file
+    /// Save png file without removed chunk to new file
     pub(crate) output_file: Option<String>,
 }
 
@@ -46,7 +46,7 @@ pub struct Remove {
     pub(crate) file_path: String,
     /// Chunk type is 4 ASCII letters
     pub(crate) chunk_type: String,
-    /// Save result to new file
+    /// Save png file without removed chunk to new file
     pub(crate) output_file: Option<String>,
 }
 
