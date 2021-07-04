@@ -37,6 +37,9 @@ pub struct Decode {
     pub(crate) file_path: String,
     /// Chunk type is 4 ASCII letters
     pub(crate) chunk_type: String,
+    /// If data should go as raw unescaped bytes to stdout
+    #[clap(long)]
+    pub(crate) raw: bool,
 }
 
 /// Removes a chunk from a PNG file and saves the result
@@ -48,6 +51,9 @@ pub struct Remove {
     pub(crate) chunk_type: String,
     /// Save png file without removed chunk to new file
     pub(crate) output_file: Option<String>,
+    /// If data should go as raw unescaped bytes to stdout
+    #[clap(long)]
+    pub(crate) raw: bool,
 }
 
 /// Prints all of the chunks in a PNG file

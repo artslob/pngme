@@ -5,13 +5,22 @@ use crate::args;
 use crate::chunk::Chunk;
 use crate::chunk_type::ChunkType;
 use crate::png;
-use std::io::Read;
+use std::io::{Read, Write};
 
-fn data_as_string(chunk: &Chunk) -> String {
-    match chunk.data_as_string() {
-        Ok(s) => format!("Data: {}", s),
-        Err(_) => "Could not parse data as UTF-8".to_string(),
+fn print_chunk_to_stdout(chunk: &Chunk, raw: bool) -> crate::Result<()> {
+    if raw {
+        let mut out = std::io::stdout();
+        out.write_all(chunk.data())?;
+        out.flush()?;
+    } else {
+        println!("{}", chunk);
+        let data = match chunk.data_as_string() {
+            Ok(s) => format!("Data: {}", s),
+            Err(_) => "Could not parse data as UTF-8".to_string(),
+        };
+        println!("{}", data);
     }
+    Ok(())
 }
 
 pub fn print(cmd: args::Print) -> crate::Result<()> {
@@ -42,10 +51,7 @@ pub fn decode(cmd: args::Decode) -> crate::Result<()> {
         None => {
             println!("Chunk with type {:?} not found", cmd.chunk_type);
         }
-        Some(chunk) => {
-            println!("{}", chunk);
-            println!("{}", data_as_string(chunk));
-        }
+        Some(chunk) => print_chunk_to_stdout(chunk, cmd.raw)?,
     }
     Ok(())
 }
@@ -54,8 +60,7 @@ pub fn remove(cmd: args::Remove) -> crate::Result<()> {
     let mut image = png::Png::from_file(&cmd.file_path)?;
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
     let chunk = image.remove_chunk(&chunk_type)?;
-    println!("{}", chunk);
-    println!("{}", data_as_string(&chunk));
+    print_chunk_to_stdout(&chunk, cmd.raw)?;
     let output_path = cmd.output_file.unwrap_or(cmd.file_path);
     fs::write(output_path, image.as_bytes())?;
     Ok(())
