@@ -25,7 +25,7 @@ pub struct Encode {
     /// Chunk type is 4 ASCII letters
     pub(crate) chunk_type: String,
     /// Just any text
-    pub(crate) message: String,
+    pub(crate) message: Option<String>,
     /// Save result to new file
     pub(crate) output_file: Option<String>,
 }

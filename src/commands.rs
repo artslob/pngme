@@ -5,6 +5,7 @@ use crate::args;
 use crate::chunk::Chunk;
 use crate::chunk_type::ChunkType;
 use crate::png;
+use std::io::Read;
 
 fn data_as_string(chunk: &Chunk) -> String {
     match chunk.data_as_string() {
@@ -63,7 +64,16 @@ pub fn remove(cmd: args::Remove) -> crate::Result<()> {
 pub fn encode(cmd: args::Encode) -> crate::Result<()> {
     let mut image = png::Png::from_file(&cmd.file_path)?;
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
-    image.append_chunk(Chunk::new(chunk_type, cmd.message.as_bytes()));
+    let buf: Vec<u8> = match &cmd.message {
+        None => {
+            let mut buf = Vec::new();
+            std::io::stdin().lock().read_to_end(&mut buf)?;
+            buf
+        }
+        // TODO when string is present also check nothing is piped on stdin
+        Some(string) => string.as_bytes().iter().copied().collect(),
+    };
+    image.append_chunk(Chunk::new(chunk_type, &buf));
     let output_path = cmd.output_file.unwrap_or(cmd.file_path);
     fs::write(output_path, image.as_bytes())?;
     Ok(())
