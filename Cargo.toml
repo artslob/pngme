@@ -1,5 +1,5 @@
 [package]
-name = "pngme"
+name = "pngme-lib"
 version = "1.0.0"
 authors = ["artslob <artslob@yandex.ru>"]
 edition = "2018"
