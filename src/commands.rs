@@ -3,11 +3,11 @@ use std::io::{Read, Write};
 use std::str::FromStr;
 
 use crate::args;
-use crate::chunk::Chunk;
-use crate::chunk_type::ChunkType;
-use crate::png;
+use pngme::chunk::Chunk;
+use pngme::chunk_type::ChunkType;
+use pngme::png;
 
-fn print_chunk_to_stdout(chunk: &Chunk, raw: bool) -> crate::Result<()> {
+fn print_chunk_to_stdout(chunk: &Chunk, raw: bool) -> pngme::Result<()> {
     if raw {
         let mut out = std::io::stdout();
         out.write_all(chunk.data())?;
@@ -22,7 +22,7 @@ fn print_chunk_to_stdout(chunk: &Chunk, raw: bool) -> crate::Result<()> {
     Ok(())
 }
 
-pub fn print(cmd: args::Print) -> crate::Result<()> {
+pub fn print(cmd: args::Print) -> pngme::Result<()> {
     let image = png::Png::from_file(&cmd.file_path)?;
     let indent = " ".repeat(4);
     for (i, chunk) in image.chunks().iter().enumerate() {
@@ -42,7 +42,7 @@ pub fn print(cmd: args::Print) -> crate::Result<()> {
     Ok(())
 }
 
-pub fn decode(cmd: args::Decode) -> crate::Result<()> {
+pub fn decode(cmd: args::Decode) -> pngme::Result<()> {
     let image = png::Png::from_file(&cmd.file_path)?;
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
     let chunk = image.chunk_by_type(&chunk_type);
@@ -55,7 +55,7 @@ pub fn decode(cmd: args::Decode) -> crate::Result<()> {
     Ok(())
 }
 
-pub fn remove(cmd: args::Remove) -> crate::Result<()> {
+pub fn remove(cmd: args::Remove) -> pngme::Result<()> {
     let mut image = png::Png::from_file(&cmd.file_path)?;
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
     let chunk = image.remove_chunk(&chunk_type)?;
@@ -65,7 +65,7 @@ pub fn remove(cmd: args::Remove) -> crate::Result<()> {
     Ok(())
 }
 
-pub fn encode(cmd: args::Encode) -> crate::Result<()> {
+pub fn encode(cmd: args::Encode) -> pngme::Result<()> {
     let mut image = png::Png::from_file(&cmd.file_path)?;
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
     let has_input_from_stdin = atty::isnt(atty::Stream::Stdin);
