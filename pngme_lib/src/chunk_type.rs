@@ -1,3 +1,5 @@
+use crate::error::ChunkTypeParseError;
+
 #[derive(std::fmt::Debug)]
 pub struct ChunkType {
     ancillary_bit_char: char,
@@ -29,16 +31,16 @@ impl ChunkType {
         self.safe_to_copy_bit_char.is_ascii_lowercase()
     }
 
-    fn validate_char(ch: char) -> Result<char, String> {
+    fn validate_char(ch: char) -> Result<char, ChunkTypeParseError> {
         match ch.is_ascii_lowercase() || ch.is_ascii_uppercase() {
             true => Ok(ch),
-            false => Err(format!("char should be ascii letter: {}", ch)),
+            false => Err(ChunkTypeParseError::NotAsciiChar(ch)),
         }
     }
 }
 
 impl std::convert::TryFrom<[u8; 4]> for ChunkType {
-    type Error = String;
+    type Error = ChunkTypeParseError;
 
     fn try_from(bytes: [u8; 4]) -> Result<Self, Self::Error> {
         let ancillary_bit_char = Self::validate_char(char::from(bytes[0]))?;
@@ -64,7 +66,7 @@ impl std::convert::TryFrom<[u8; 4]> for ChunkType {
 }
 
 impl std::str::FromStr for ChunkType {
-    type Err = String;
+    type Err = ChunkTypeParseError;
 
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         let chars = value.chars().collect::<Vec<char>>();
@@ -75,7 +77,10 @@ impl std::str::FromStr for ChunkType {
                 Self::validate_char(third)?,
                 Self::validate_char(forth)?,
             ],
-            _ => return Err("string should contain 4 chars".into()),
+            _ => {
+                let err = ChunkTypeParseError::FromStrInvalidNumberOfChars(chars.len());
+                return Err(err);
+            }
         };
         Ok(ChunkType {
             ancillary_bit_char: chars[0],
