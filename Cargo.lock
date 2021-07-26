@@ -149,12 +149,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "afb2e1c3ee07430c2cf76151675e583e0f19985fa6efae47d6848a3e2c824f85"
 
 [[package]]
-name = "pngme-lib"
+name = "pngme"
 version = "1.0.0"
 dependencies = [
  "atty",
- "byteorder",
  "clap",
+ "pngme_lib",
+]
+
+[[package]]
+name = "pngme_lib"
+version = "1.0.0"
+dependencies = [
+ "byteorder",
  "crc",
  "derive_more",
 ]

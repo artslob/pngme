@@ -1,0 +1,10 @@
+[package]
+name = "pngme"
+version = "1.0.0"
+authors = ["artslob <artslob@yandex.ru>"]
+edition = "2018"
+
+[dependencies]
+clap = "3.0.0-beta.2"
+atty = "0.2.14"
+pngme_lib = { path = "../pngme_lib" }
