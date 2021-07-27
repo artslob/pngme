@@ -2,6 +2,8 @@ use crate::chunk_type::ChunkType;
 use byteorder::ByteOrder;
 use std::convert::TryInto;
 
+use crate::error::ChunkParseError;
+
 #[derive(::derive_more::Display)]
 #[display(fmt = "Chunk \"{}\" len:{}", chunk_type, length)]
 pub struct Chunk {
@@ -55,29 +57,29 @@ impl Chunk {
 }
 
 impl std::convert::TryFrom<&[u8]> for Chunk {
-    type Error = String;
+    type Error = ChunkParseError;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
         let mut bytes_iter = bytes.iter();
         let length: Vec<u8> = bytes_iter.by_ref().take(4).copied().collect();
         if length.len() != 4 {
-            return Err("Not enough bytes to parse length".to_owned());
+            return Err(ChunkParseError::NotEnoughBytesToParseLength);
         }
         let length = byteorder::BigEndian::read_u32(&length[..]);
         let type_vector: Vec<u8> = bytes_iter.by_ref().take(4).copied().collect();
-        let type_error = Err("Not enough elements to parse type".to_owned());
+        let type_error = Err(ChunkParseError::NotEnoughBytesToParseType);
         let type_bytes: [u8; 4] = <[u8; 4]>::try_from(type_vector).or(type_error)?;
         let chunk_type = ChunkType::try_from(type_bytes)?;
         let data_take_count = bytes.len().saturating_sub(4 * 3);
         let data: Vec<u8> = bytes_iter.by_ref().take(data_take_count).copied().collect();
-        let data_parse_error = Err("Could not parse length of data".to_owned());
+        let data_parse_error = Err(ChunkParseError::LengthDoesNotFitToU32);
         let data_length: u32 = data.len().try_into().or(data_parse_error)?;
         if length != data_length {
-            return Err("Length of data not equal to encoded length".to_owned());
+            return Err(ChunkParseError::EncodedLengthNotEqualToActual);
         }
         let crc: Vec<u8> = bytes_iter.by_ref().copied().collect();
         if crc.len() != 4 {
-            return Err("Could not parse crc".to_owned());
+            return Err(ChunkParseError::CouldNotParseCrc);
         }
         let crc = byteorder::BigEndian::read_u32(&crc[..]);
         let data_for_crc: Vec<u8> = chunk_type
@@ -87,7 +89,7 @@ impl std::convert::TryFrom<&[u8]> for Chunk {
             .copied()
             .collect();
         if crc != ::crc::crc32::checksum_ieee(&data_for_crc[..]) {
-            return Err("Decoded crc not equal to calculated crc".to_owned());
+            return Err(ChunkParseError::CrcMismatch);
         }
         Ok(Chunk {
             length,
