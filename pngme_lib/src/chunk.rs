@@ -1,7 +1,9 @@
-use crate::chunk_type::ChunkType;
-use byteorder::ByteOrder;
 use std::convert::TryInto;
+use std::string::FromUtf8Error;
 
+use byteorder::ByteOrder;
+
+use crate::chunk_type::ChunkType;
 use crate::error::ChunkParseError;
 
 #[derive(::derive_more::Display)]
@@ -41,8 +43,8 @@ impl Chunk {
     pub fn crc(&self) -> u32 {
         self.crc
     }
-    pub fn data_as_string(&self) -> crate::Result<String> {
-        String::from_utf8(self.data.clone()).map_err(|x| Box::new(x).into())
+    pub fn data_as_string(&self) -> Result<String, FromUtf8Error> {
+        String::from_utf8(self.data.clone())
     }
     pub fn as_bytes(&self) -> Vec<u8> {
         self.length
@@ -102,10 +104,10 @@ impl std::convert::TryFrom<&[u8]> for Chunk {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     use std::convert::TryFrom;
     use std::str::FromStr;
+
+    use super::*;
 
     fn testing_bytes() -> Vec<u8> {
         let data_length: u32 = 42;
