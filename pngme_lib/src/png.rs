@@ -60,7 +60,7 @@ impl std::fmt::Display for Png {
 }
 
 impl std::convert::TryFrom<&[u8]> for Png {
-    type Error = String;
+    type Error = error::PngFromBytesError;
 
     fn try_from(bytes: &[u8]) -> Result<Png, Self::Error> {
         let mut bytes_iter = bytes.iter();
@@ -70,7 +70,7 @@ impl std::convert::TryFrom<&[u8]> for Png {
             .copied()
             .collect();
         if header != Self::STANDARD_HEADER {
-            return Err("Header does not equal to PNG file signature".to_owned());
+            return Err(error::PngFromBytesError::InvalidHeader);
         }
         let mut chunks: Vec<Chunk> = vec![];
         loop {
@@ -79,7 +79,7 @@ impl std::convert::TryFrom<&[u8]> for Png {
                 break;
             }
             if length_vec.len() != 4 {
-                return Err("Not enough bytes to parse length".to_owned());
+                return Err(error::PngFromBytesError::LengthParse);
             }
             let length = byteorder::BigEndian::read_u32(&length_vec[..]);
             let data: Vec<u8> = length

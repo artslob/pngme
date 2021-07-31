@@ -63,3 +63,30 @@ impl fmt::Display for RemoveChunkError {
 }
 
 impl std::error::Error for RemoveChunkError {}
+
+#[derive(Debug)]
+pub enum PngFromBytesError {
+    InvalidHeader,
+    LengthParse,
+    ChunkParseError(ChunkParseError),
+}
+
+impl fmt::Display for PngFromBytesError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::InvalidHeader => {
+                write!(f, "Header does not equal to PNG file signature")
+            }
+            Self::LengthParse => write!(f, "Not enough bytes to parse length"),
+            Self::ChunkParseError(e) => e.fmt(f),
+        }
+    }
+}
+
+impl std::error::Error for PngFromBytesError {}
+
+impl From<ChunkParseError> for PngFromBytesError {
+    fn from(err: ChunkParseError) -> Self {
+        Self::ChunkParseError(err)
+    }
+}
