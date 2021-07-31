@@ -118,7 +118,10 @@ mod tests {
         Png::from_chunks(chunks)
     }
 
-    fn chunk_from_strings(chunk_type: &str, data: &str) -> crate::Result<Chunk> {
+    fn chunk_from_strings(
+        chunk_type: &str,
+        data: &str,
+    ) -> Result<Chunk, error::ChunkTypeParseError> {
         let chunk_type = ChunkType::from_str(chunk_type)?;
         let data: Vec<u8> = data.bytes().collect();
         Ok(Chunk::new(chunk_type, &data[..]))

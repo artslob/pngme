@@ -1,6 +1,8 @@
 // Error handling implemented like in https://blog.burntsushi.net/rust-error-handling
 use std::fmt;
 
+// TODO impl empty methods
+
 #[derive(Debug)]
 pub enum ChunkTypeParseError {
     NotAsciiChar(char),

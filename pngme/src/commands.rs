@@ -7,7 +7,7 @@ use pngme_lib::chunk::Chunk;
 use pngme_lib::chunk_type::ChunkType;
 use pngme_lib::png;
 
-fn print_chunk_to_stdout(chunk: &Chunk, raw: bool) -> pngme_lib::Result<()> {
+fn print_chunk_to_stdout(chunk: &Chunk, raw: bool) -> crate::Result<()> {
     if raw {
         let mut out = std::io::stdout();
         out.write_all(chunk.data())?;
@@ -22,7 +22,7 @@ fn print_chunk_to_stdout(chunk: &Chunk, raw: bool) -> pngme_lib::Result<()> {
     Ok(())
 }
 
-pub fn print(cmd: args::Print) -> pngme_lib::Result<()> {
+pub fn print(cmd: args::Print) -> crate::Result<()> {
     let image = png::Png::from_file(&cmd.file_path)?;
     let indent = " ".repeat(4);
     for (i, chunk) in image.chunks().iter().enumerate() {
@@ -42,12 +42,13 @@ pub fn print(cmd: args::Print) -> pngme_lib::Result<()> {
     Ok(())
 }
 
-pub fn decode(cmd: args::Decode) -> pngme_lib::Result<()> {
+pub fn decode(cmd: args::Decode) -> crate::Result<()> {
     let image = png::Png::from_file(&cmd.file_path)?;
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
     let chunk = image.chunk_by_type(&chunk_type);
     match chunk {
         None => {
+            // TODO with raw do not print this or maybe return error?
             println!("Chunk with type {:?} not found", cmd.chunk_type);
         }
         Some(chunk) => print_chunk_to_stdout(chunk, cmd.raw)?,
@@ -55,7 +56,7 @@ pub fn decode(cmd: args::Decode) -> pngme_lib::Result<()> {
     Ok(())
 }
 
-pub fn remove(cmd: args::Remove) -> pngme_lib::Result<()> {
+pub fn remove(cmd: args::Remove) -> crate::Result<()> {
     let mut image = png::Png::from_file(&cmd.file_path)?;
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
     let chunk = image.remove_chunk(&chunk_type)?;
@@ -65,7 +66,7 @@ pub fn remove(cmd: args::Remove) -> pngme_lib::Result<()> {
     Ok(())
 }
 
-pub fn encode(cmd: args::Encode) -> pngme_lib::Result<()> {
+pub fn encode(cmd: args::Encode) -> crate::Result<()> {
     let mut image = png::Png::from_file(&cmd.file_path)?;
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
     let has_input_from_stdin = atty::isnt(atty::Stream::Stdin);
