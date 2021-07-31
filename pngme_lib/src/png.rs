@@ -14,7 +14,8 @@ pub struct Png {
 impl Png {
     pub const STANDARD_HEADER: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
 
-    pub fn from_file(file_path: &str) -> crate::Result<Self> {
+    pub fn from_file(file_path: &str) -> Result<Self, error::PngFromFileError> {
+        // TODO accept generic as path
         let bytes = fs::read(file_path)?;
         Ok(Self::try_from(&bytes[..])?)
     }

@@ -1,3 +1,4 @@
+// Error handling implemented like in https://blog.burntsushi.net/rust-error-handling
 use std::fmt;
 
 #[derive(Debug)]
@@ -88,5 +89,35 @@ impl std::error::Error for PngFromBytesError {}
 impl From<ChunkParseError> for PngFromBytesError {
     fn from(err: ChunkParseError) -> Self {
         Self::ChunkParseError(err)
+    }
+}
+
+#[derive(Debug)]
+pub enum PngFromFileError {
+    FileReadError(std::io::Error),
+    PngFromBytesError(PngFromBytesError),
+}
+
+impl fmt::Display for PngFromFileError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // TODO use either! macro
+        match self {
+            PngFromFileError::FileReadError(e) => e.fmt(f),
+            PngFromFileError::PngFromBytesError(e) => e.fmt(f),
+        }
+    }
+}
+
+impl std::error::Error for PngFromFileError {}
+
+impl From<std::io::Error> for PngFromFileError {
+    fn from(err: std::io::Error) -> Self {
+        Self::FileReadError(err)
+    }
+}
+
+impl From<PngFromBytesError> for PngFromFileError {
+    fn from(err: PngFromBytesError) -> Self {
+        Self::PngFromBytesError(err)
     }
 }
