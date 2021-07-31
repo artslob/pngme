@@ -5,6 +5,7 @@ use byteorder::ByteOrder;
 
 use crate::chunk::Chunk;
 use crate::chunk_type::ChunkType;
+use crate::error;
 
 pub struct Png {
     chunks: Vec<Chunk>,
@@ -26,13 +27,16 @@ impl Png {
     pub fn append_chunk(&mut self, chunk: Chunk) {
         self.chunks.push(chunk)
     }
-    pub fn remove_chunk(&mut self, chunk_type: &ChunkType) -> crate::Result<Chunk> {
+    pub fn remove_chunk(
+        &mut self,
+        chunk_type: &ChunkType,
+    ) -> Result<Chunk, error::RemoveChunkError> {
         let index = self
             .chunks
             .iter()
             .enumerate()
             .find_map(|(i, chunk)| (chunk.chunk_type() == chunk_type).then(|| i))
-            .ok_or(format!("Chunk with type {} not found", chunk_type))?;
+            .ok_or(error::RemoveChunkError::NotFound)?;
         Ok(self.chunks.remove(index))
     }
     pub fn chunk_by_type(&self, chunk_type: &ChunkType) -> Option<&Chunk> {

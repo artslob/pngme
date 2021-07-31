@@ -50,3 +50,16 @@ impl fmt::Display for ChunkParseError {
 }
 
 impl std::error::Error for ChunkParseError {}
+
+#[derive(Debug)]
+pub enum RemoveChunkError {
+    NotFound,
+}
+
+impl fmt::Display for RemoveChunkError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        Ok(())
+    }
+}
+
+impl std::error::Error for RemoveChunkError {}
