@@ -45,14 +45,10 @@ pub fn print(cmd: args::Print) -> crate::Result<()> {
 pub fn decode(cmd: args::Decode) -> crate::Result<()> {
     let image = png::Png::from_file(&cmd.file_path)?;
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
-    let chunk = image.chunk_by_type(&chunk_type);
-    match chunk {
-        None => {
-            // TODO with raw do not print this or maybe return error?
-            println!("Chunk with type {:?} not found", cmd.chunk_type);
-        }
-        Some(chunk) => print_chunk_to_stdout(chunk, cmd.raw)?,
-    }
+    let chunk = image
+        .chunk_by_type(&chunk_type)
+        .ok_or(format!("Chunk with type {:?} not found", &cmd.chunk_type))?;
+    print_chunk_to_stdout(chunk, cmd.raw)?;
     Ok(())
 }
 
