@@ -1,5 +1,7 @@
 use ::clap::{AppSettings, Clap};
 
+// TODO use path types
+
 #[derive(Clap)]
 #[clap(setting = AppSettings::ColoredHelp)]
 #[clap(version = "1.0", author = "artslob <artslob@yandex.ru>")]

@@ -1,5 +1,6 @@
 use std::convert::TryFrom;
 use std::fs;
+use std::path::Path;
 
 use byteorder::ByteOrder;
 
@@ -14,9 +15,8 @@ pub struct Png {
 impl Png {
     pub const STANDARD_HEADER: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
 
-    pub fn from_file(file_path: &str) -> Result<Self, error::PngFromFileError> {
-        // TODO accept generic as path
-        let bytes = fs::read(file_path)?;
+    pub fn from_file(path: impl AsRef<Path>) -> Result<Self, error::PngFromFileError> {
+        let bytes = fs::read(path)?;
         Ok(Self::try_from(&bytes[..])?)
     }
     pub fn from_chunks(chunks: Vec<Chunk>) -> Self {
