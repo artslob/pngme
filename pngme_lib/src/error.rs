@@ -1,23 +1,22 @@
 // Error handling implemented like in https://blog.burntsushi.net/rust-error-handling
 use std::fmt;
 
-// TODO impl empty methods
-
 #[derive(Debug)]
 pub enum ChunkTypeParseError {
     NotAsciiChar(char),
     FromStrInvalidNumberOfChars(usize),
 }
 
-impl From<ChunkTypeParseError> for String {
-    fn from(err: ChunkTypeParseError) -> String {
-        "".to_owned()
-    }
-}
-
 impl fmt::Display for ChunkTypeParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Ok(())
+        match self {
+            ChunkTypeParseError::NotAsciiChar(ch) => {
+                write!(f, "char should be ascii letter: {}", ch)
+            }
+            ChunkTypeParseError::FromStrInvalidNumberOfChars(number) => {
+                write!(f, "string should contain 4 chars, got {} chars", number)
+            }
+        }
     }
 }
 
@@ -40,15 +39,23 @@ impl From<ChunkTypeParseError> for ChunkParseError {
     }
 }
 
-impl From<ChunkParseError> for String {
-    fn from(err: ChunkParseError) -> String {
-        "".to_owned()
-    }
-}
-
 impl fmt::Display for ChunkParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Ok(())
+        match self {
+            ChunkParseError::ChunkTypeParseError(e) => e.fmt(f),
+            ChunkParseError::NotEnoughBytesToParseLength => {
+                write!(f, "Not enough bytes to parse length")
+            }
+            ChunkParseError::NotEnoughBytesToParseType => {
+                write!(f, "Not enough elements to parse type")
+            }
+            ChunkParseError::LengthDoesNotFitToU32 => write!(f, "Could not parse length of data"),
+            ChunkParseError::EncodedLengthNotEqualToActual => {
+                write!(f, "Length of data not equal to encoded length")
+            }
+            ChunkParseError::CouldNotParseCrc => write!(f, "Could not parse crc"),
+            ChunkParseError::CrcMismatch => write!(f, "Decoded crc not equal to calculated crc"),
+        }
     }
 }
 
@@ -56,12 +63,16 @@ impl std::error::Error for ChunkParseError {}
 
 #[derive(Debug)]
 pub enum RemoveChunkError {
-    NotFound,
+    NotFound(String),
 }
 
 impl fmt::Display for RemoveChunkError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Ok(())
+        match self {
+            RemoveChunkError::NotFound(chunk_type) => {
+                write!(f, "Chunk with type {} not found", chunk_type)
+            }
+        }
     }
 }
 
@@ -102,7 +113,6 @@ pub enum PngFromFileError {
 
 impl fmt::Display for PngFromFileError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // TODO use either! macro
         match self {
             PngFromFileError::FileReadError(e) => e.fmt(f),
             PngFromFileError::PngFromBytesError(e) => e.fmt(f),

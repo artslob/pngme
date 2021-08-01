@@ -37,7 +37,7 @@ impl Png {
             .iter()
             .enumerate()
             .find_map(|(i, chunk)| (chunk.chunk_type() == chunk_type).then(|| i))
-            .ok_or(error::RemoveChunkError::NotFound)?;
+            .ok_or_else(|| error::RemoveChunkError::NotFound(chunk_type.to_string()))?;
         Ok(self.chunks.remove(index))
     }
     pub fn chunk_by_type(&self, chunk_type: &ChunkType) -> Option<&Chunk> {
