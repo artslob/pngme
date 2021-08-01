@@ -1,6 +1,5 @@
 use ::clap::{AppSettings, Clap};
-
-// TODO use path types
+use std::path::PathBuf;
 
 #[derive(Clap)]
 #[clap(setting = AppSettings::ColoredHelp)]
@@ -23,21 +22,21 @@ pub enum SubCommand {
 #[derive(Clap)]
 pub struct Encode {
     /// Path to png file
-    pub(crate) file_path: String,
+    pub(crate) file_path: PathBuf,
     /// Chunk type is 4 ASCII letters
     pub(crate) chunk_type: String,
     /// Just any text
     pub(crate) message: Option<String>,
     /// Save png file with added chunk to new file
     #[clap(short, long)]
-    pub(crate) output_file: Option<String>,
+    pub(crate) output_file: Option<PathBuf>,
 }
 
 /// Searches for a message hidden in a PNG file and prints the message if one is found
 #[derive(Clap)]
 pub struct Decode {
     /// Path to png file
-    pub(crate) file_path: String,
+    pub(crate) file_path: PathBuf,
     /// Chunk type is 4 ASCII letters
     pub(crate) chunk_type: String,
     /// Set when data should go as raw unescaped bytes to stdout
@@ -49,12 +48,12 @@ pub struct Decode {
 #[derive(Clap)]
 pub struct Remove {
     /// Path to png file
-    pub(crate) file_path: String,
+    pub(crate) file_path: PathBuf,
     /// Chunk type is 4 ASCII letters
     pub(crate) chunk_type: String,
     /// Save png file with removed chunk to new file
     #[clap(short, long)]
-    pub(crate) output_file: Option<String>,
+    pub(crate) output_file: Option<PathBuf>,
     /// Set when data should go as raw unescaped bytes to stdout
     #[clap(long)]
     pub(crate) raw: bool,
@@ -64,7 +63,7 @@ pub struct Remove {
 #[derive(Clap)]
 pub struct Print {
     /// Path to png file
-    pub(crate) file_path: String,
+    pub(crate) file_path: PathBuf,
     /// Get detailed information about chunks
     #[clap(long)]
     pub(crate) verbose: bool,
