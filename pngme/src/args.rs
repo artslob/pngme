@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 #[derive(Clap)]
 #[clap(setting = AppSettings::ColoredHelp)]
-#[clap(version = "1.0", author = "artslob <artslob@yandex.ru>")]
+#[clap(version = env!("CARGO_PKG_VERSION"))]
 #[clap(about = "Utility that lets you hide secret messages in PNG files")]
 pub struct Opts {
     #[clap(subcommand)]
