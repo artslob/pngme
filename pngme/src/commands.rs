@@ -67,7 +67,7 @@ pub fn encode(cmd: args::Encode) -> crate::Result<()> {
     let chunk_type = ChunkType::from_str(&cmd.chunk_type)?;
     let has_input_from_stdin = atty::isnt(atty::Stream::Stdin);
     let buf: Vec<u8> = match (cmd.message, has_input_from_stdin) {
-        (None, false) | (None, true) => {
+        (None, _) => {
             let mut buf = Vec::new();
             std::io::stdin().lock().read_to_end(&mut buf)?;
             buf
